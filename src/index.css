@@ -1,0 +1,81 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply select-none;
+  }
+
+  :root {
+    --background: 220 10% 8%;
+    --foreground: 60 5% 90%;
+    --card: 220 10% 12%;
+    --card-foreground: 60 5% 90%;
+    --primary: 82 85% 55%;
+    --primary-foreground: 220 10% 8%;
+    --secondary: 220 8% 18%;
+    --secondary-foreground: 60 5% 85%;
+    --muted: 220 8% 16%;
+    --muted-foreground: 220 5% 55%;
+    --accent: 82 85% 55%;
+    --accent-foreground: 220 10% 8%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 60 5% 90%;
+    --border: 220 8% 20%;
+    --input: 220 8% 20%;
+    --ring: 82 85% 55%;
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply text-foreground;
+    font-family: system-ui, -apple-system, sans-serif;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+    background: transparent;
+  }
+
+  html {
+    background: transparent;
+  }
+
+  /* Scrollbar pill senza frecce */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.25);
+  }
+  ::-webkit-scrollbar-button {
+    display: none;
+  }
+}
+
+@layer utilities {
+  /* Ombre testo per leggibilità sopra glassmorphism e video */
+  .text-shadow-sm {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  }
+  .text-shadow {
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7), 0 1px 2px rgba(0, 0, 0, 0.5);
+  }
+  .text-shadow-lg {
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8), 0 1px 3px rgba(0, 0, 0, 0.6);
+  }
+  .text-shadow-none {
+    text-shadow: none;
+  }
+}

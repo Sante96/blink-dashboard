@@ -1,0 +1,82 @@
+{
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build",
+    "devPath": "http://localhost:1420",
+    "distDir": "../dist"
+  },
+  "package": {
+    "productName": "Blink Dashboard",
+    "version": "../package.json"
+  },
+  "tauri": {
+    "allowlist": {
+      "all": false,
+      "window": {
+        "all": false,
+        "close": true,
+        "hide": true,
+        "show": true,
+        "maximize": true,
+        "unmaximize": true,
+        "minimize": true,
+        "unminimize": true,
+        "setFocus": true,
+        "startDragging": true
+      },
+      "dialog": {
+        "save": true
+      },
+      "notification": {
+        "all": true
+      }
+    },
+    "bundle": {
+      "active": true,
+      "targets": "all",
+      "identifier": "com.blinkdashboard.app",
+      "icon": [
+        "icons/32x32.png",
+        "icons/128x128.png",
+        "icons/128x128@2x.png",
+        "icons/icon.icns",
+        "icons/icon.ico"
+      ],
+      "resources": [
+        "resources/backend/*",
+        "resources/backend/**/*"
+      ]
+    },
+    "updater": {
+      "active": true,
+      "dialog": true,
+      "endpoints": [
+        "https://github.com/Sante96/blink-dashboard/releases/latest/download/latest.json"
+      ],
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEZEMzdCMDRFQjZENEVEM0EKUldRNjdkUzJUckEzL1djM1pINUJGSGJvWGF1SkxtMWUzdi9rSzJNanQ5ZnoweERrYk5uekdXWkMK"
+    },
+    "security": {
+      "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: http://127.0.0.1:8000; media-src 'self' blob: http://127.0.0.1:8000; connect-src 'self' http://127.0.0.1:8000 ws://127.0.0.1:8000; font-src 'self' data:",
+      "devCsp": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: http://127.0.0.1:8000; media-src 'self' blob: http://127.0.0.1:8000; connect-src 'self' http://localhost:* ws://localhost:* http://127.0.0.1:8000 ws://127.0.0.1:8000; font-src 'self' data:"
+    },
+    "systemTray": {
+      "iconPath": "icons/icon.ico",
+      "iconAsTemplate": false,
+      "menuOnLeftClick": false
+    },
+    "windows": [
+      {
+        "fullscreen": false,
+        "resizable": true,
+        "decorations": false,
+        "transparent": true,
+        "maximized": true,
+        "title": "Blink Dashboard",
+        "width": 1920,
+        "height": 1080,
+        "minWidth": 800,
+        "minHeight": 600
+      }
+    ]
+  }
+}

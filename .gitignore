@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+target/
+
+# Build output
+dist/
+
+# Environment
+.env
+.env.local
+
+# Blink credentials
+backend/blink_credentials.json
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+backend/venv/
+backend/.venv/
+
+# PyInstaller build artifacts
+build/
+src-tauri/resources/backend/*
+!src-tauri/resources/backend/.gitkeep
+
+# Claude
+.claude/
+
+# Tauri build cache
+src-tauri/target/
+tsconfig.node.tsbuildinfo
+
+# Chiavi di firma updater
+*.key
+*.key.pub

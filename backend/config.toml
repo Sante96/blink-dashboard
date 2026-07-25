@@ -1,0 +1,24 @@
+# Configurazione del backend Blink Dashboard.
+# Tutti i valori hanno un default ragionevole: questo file è opzionale.
+
+[server]
+host = "127.0.0.1"
+port = 8000
+
+[blink]
+# Secondi di attesa dopo un comando prima di rileggere lo stato.
+settle_delay = 1.5
+# Tentativi su "System busy" (409) per comandi REST.
+retry_attempts = 5
+
+[storage]
+# Vuoto = default (%APPDATA%/BlinkDashboard)
+credentials_dir = ""
+# Vuoto = default (%TEMP%/blink_merge)
+temp_dir = ""
+# Eviction clip temporanei (MB). 0 = nessun limite.
+max_cache_mb = 500
+
+[logging]
+# debug | info | warning | error
+level = "info"

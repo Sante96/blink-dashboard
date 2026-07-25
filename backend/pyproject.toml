@@ -1,0 +1,26 @@
+[project]
+name = "backend"
+version = "0.1.0"
+description = "Blink Dashboard backend"
+requires-python = ">=3.14"
+dependencies = [
+    "blinkpy>=0.25.6",
+    "fastapi==0.115.6",
+    "pydantic>=2.13.4",
+    "python-dotenv>=1.2.2",
+    "uvicorn>=0.49.0",
+    "websockets>=16.0",
+]
+
+[tool.pyright]
+reportMissingTypeStubs = false
+
+[tool.uv.sources]
+# Branch della PR #1232 (readexactly fix per il livestream IMMIS) basata su dev.
+# Tornare a fronzbot/blinkpy@dev una volta mergiata.
+blinkpy = { git = "https://github.com/jasoncarreira/blinkpy.git", rev = "fix/livestream-readexactly" }
+
+[dependency-groups]
+dev = [
+    "ruff>=0.15.20",
+]

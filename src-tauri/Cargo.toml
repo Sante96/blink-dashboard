@@ -1,0 +1,37 @@
+[package]
+name = "blink-app"
+version = "0.5.0"
+description = "Blink Camera Dashboard"
+authors = ["Sante"]
+license = ""
+repository = ""
+edition = "2021"
+
+[build-dependencies]
+tauri-build = { version = "1.5", features = [] }
+
+[dependencies]
+serde_json = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+base64 = "0.22"
+once_cell = "1.19"
+tauri = { version = "1.6", features = [
+    "updater",
+    "system-tray",
+    "dialog-save",
+    "notification-all",
+    "window-close",
+    "window-hide",
+    "window-show",
+    "window-maximize",
+    "window-unmaximize",
+    "window-minimize",
+    "window-unminimize",
+    "window-set-focus",
+    "window-start-dragging",
+] }
+tauri-plugin-autostart = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
+
+[features]
+default = ["custom-protocol"]
+custom-protocol = ["tauri/custom-protocol"]
