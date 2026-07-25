@@ -104,6 +104,7 @@ def main() -> None:
         "camera_settings",
         "config",
         "credentials",
+        "ffmpeg_path",
         "local_auth",
         "state",
         "routers",
@@ -167,6 +168,18 @@ def main() -> None:
     if not exe_path.exists():
         print(f"ERRORE: {exe_path} non trovato!")
         sys.exit(1)
+
+    # 6. Includi ffmpeg.exe accanto a backend.exe (il livestream e il merge
+    # clip lo invocano via subprocess; l'utente finale non lo ha installato).
+    print("\n[5/5] Copia ffmpeg.exe nel bundle...")
+    ffmpeg_src = shutil.which("ffmpeg")
+    if ffmpeg_src:
+        shutil.copy2(ffmpeg_src, RESOURCES_DIR / "ffmpeg.exe")
+        ff_mb = (RESOURCES_DIR / "ffmpeg.exe").stat().st_size / (1024 * 1024)
+        print(f"    ffmpeg.exe incluso ({ff_mb:.1f} MB) da {ffmpeg_src}")
+    else:
+        print("    ATTENZIONE: ffmpeg non trovato nel PATH — il livestream")
+        print("    non funzionera' sull'app distribuita. Installa ffmpeg e rilancia.")
 
     size_mb = exe_path.stat().st_size / (1024 * 1024)
     print(f"\n=== Build completata! ===")

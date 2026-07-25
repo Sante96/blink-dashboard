@@ -24,6 +24,7 @@ from blinkpy.blinkpy import Blink
 from blinkpy import api
 
 from config import config
+from ffmpeg_path import get_ffmpeg
 from state import require_blink
 
 router = APIRouter(prefix="/media")
@@ -295,7 +296,7 @@ async def _merge_clips(clip_paths: list[str], out_path: str) -> None:
     filter_complex = ";".join(filters)
 
     cmd = [
-        "ffmpeg", "-hide_banner", "-loglevel", "error", "-y",
+        get_ffmpeg(), "-hide_banner", "-loglevel", "error", "-y",
         *inputs,
         "-filter_complex", filter_complex,
         "-map", "[out]",
