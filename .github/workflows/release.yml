@@ -1,0 +1,68 @@
+# Release automatica: si attiva pushando un tag v* (es. v0.6.0).
+# Compila backend (PyInstaller) + app Tauri, firma l'updater e pubblica
+# la GitHub Release con latest.json — l'app installata si aggiorna da sola.
+#
+# Segreti richiesti (Settings → Secrets → Actions):
+#   TAURI_PRIVATE_KEY   contenuto del file ~/.tauri/blink-dashboard.key
+#   TAURI_KEY_PASSWORD  password della chiave (vuota se generata senza)
+
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            src-tauri/target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('src-tauri/Cargo.lock') }}
+
+      - name: Setup uv (Python)
+        uses: astral-sh/setup-uv@v5
+
+      - name: Install ffmpeg
+        run: choco install ffmpeg -y --no-progress
+
+      - name: Install frontend deps
+        run: npm ci
+
+      - name: Build backend (PyInstaller + ffmpeg)
+        run: python build_backend.py
+
+      - name: Build Tauri app (signed)
+        env:
+          TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
+          TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
+        run: npm run tauri build
+
+      - name: Generate latest.json + collect artifacts
+        run: python make_release.py
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create ${{ github.ref_name }} (Get-ChildItem build/release/*) --title "${{ github.ref_name }}" --generate-notes
