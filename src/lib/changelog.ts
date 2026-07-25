@@ -17,6 +17,13 @@ export interface Release {
 
 export const changelog: Release[] = [
   {
+    version: "0.5.1",
+    date: "2026-07-26",
+    changes: [
+      { type: "fix", text: "L'app installata non trovava backend.exe (path risorse errato)" },
+    ],
+  },
+  {
     version: "0.5.0",
     date: "2026-07-09",
     changes: [

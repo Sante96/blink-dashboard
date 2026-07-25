@@ -138,9 +138,17 @@ fn main() {
             let backend_dir = if is_dev {
                 std::env::current_dir().unwrap().join("..").join("backend")
             } else {
-                app.path_resolver().resource_dir()
-                    .unwrap_or_else(|| std::env::current_dir().unwrap())
-                    .join("backend")
+                // resolve_resource risolve il path dichiarato in bundle.resources:
+                // nell'app installata i file stanno in <install>\resources\backend\,
+                // mentre resource_dir() da solo punta alla radice dell'installazione.
+                app.path_resolver()
+                    .resolve_resource("resources/backend")
+                    .unwrap_or_else(|| {
+                        std::env::current_dir()
+                            .unwrap()
+                            .join("resources")
+                            .join("backend")
+                    })
             };
 
             std::thread::spawn(move || {
