@@ -45,6 +45,10 @@ def main() -> None:
     for f in [zip_path, sig_path, *msis]:
         shutil.copy2(f, OUT_DIR / f.name)
 
+    # GitHub normalizza i nomi degli asset sostituendo gli spazi con punti:
+    # l'URL deve usare il nome normalizzato, non quello del file locale.
+    asset_name = zip_path.name.replace(" ", ".")
+
     latest = {
         "version": f"v{version}",
         "notes": f"Blink Dashboard v{version}",
@@ -52,7 +56,7 @@ def main() -> None:
         "platforms": {
             "windows-x86_64": {
                 "signature": sig_path.read_text(encoding="utf-8"),
-                "url": f"https://github.com/{REPO}/releases/download/v{version}/{zip_path.name}",
+                "url": f"https://github.com/{REPO}/releases/download/v{version}/{asset_name}",
             }
         },
     }
