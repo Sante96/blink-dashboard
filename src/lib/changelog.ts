@@ -26,6 +26,19 @@ export interface Release {
 
 export const changelog: Release[] = [
   {
+    version: "0.5.4",
+    date: "2026-07-26",
+    changes: [
+      {
+        type: "fix",
+        text: {
+          it: "Niente più finestre di cmd all'apertura degli stream e all'unione dei clip",
+          en: "No more cmd windows popping up when opening streams or merging clips",
+        },
+      },
+    ],
+  },
+  {
     version: "0.5.3",
     date: "2026-07-26",
     changes: [

@@ -8,6 +8,7 @@ prima lì, poi nel PATH come fallback.
 
 import os
 import shutil
+import subprocess
 import sys
 
 
@@ -26,3 +27,14 @@ def get_ffmpeg() -> str:
 
     # Ultimo tentativo: nome puro (fallirà con FileNotFoundError chiaro).
     return "ffmpeg"
+
+
+# Flag Windows per non aprire una finestra console a ogni lancio di ffmpeg.
+# 0 su altri OS (nessun effetto).
+NO_WINDOW_FLAGS = 0x0800_0000 if sys.platform == "win32" else 0  # CREATE_NO_WINDOW
+
+
+def popen_kwargs() -> dict:
+    """kwargs comuni per subprocess.Popen/run di ffmpeg: nasconde la console
+    su Windows (l'app è --noconsole, altrimenti spunta un cmd a ogni stream)."""
+    return {"creationflags": NO_WINDOW_FLAGS} if sys.platform == "win32" else {}

@@ -24,7 +24,7 @@ from blinkpy.blinkpy import Blink
 from blinkpy import api
 
 from config import config
-from ffmpeg_path import get_ffmpeg
+from ffmpeg_path import get_ffmpeg, popen_kwargs
 from state import require_blink
 
 router = APIRouter(prefix="/media")
@@ -313,7 +313,7 @@ async def _merge_clips(clip_paths: list[str], out_path: str) -> None:
     # supporta i subprocess async (create_subprocess_exec -> NotImplementedError).
     # Usiamo quindi subprocess.run sincrono in un thread separato.
     def _run() -> subprocess.CompletedProcess:
-        return subprocess.run(cmd, capture_output=True)
+        return subprocess.run(cmd, capture_output=True, **popen_kwargs())
 
     proc = await asyncio.to_thread(_run)
     if proc.returncode != 0:

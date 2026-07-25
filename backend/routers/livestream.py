@@ -5,7 +5,7 @@ import subprocess
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
-from ffmpeg_path import get_ffmpeg
+from ffmpeg_path import get_ffmpeg, popen_kwargs
 from local_auth import verify_ws_token
 from state import state
 
@@ -94,6 +94,7 @@ async def websocket_livestream(websocket: WebSocket, camera_name: str):
                 "pipe:1",
             ],
             stdout=subprocess.PIPE,
+            **popen_kwargs(),
         )
     except (FileNotFoundError, OSError):
         # ffmpeg non installato o non nel PATH
