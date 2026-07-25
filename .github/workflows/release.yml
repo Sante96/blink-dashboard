@@ -65,4 +65,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create ${{ github.ref_name }} (Get-ChildItem build/release/*) --title "${{ github.ref_name }}" --generate-notes
+          # Idempotente: se la release esiste già (es. creata manualmente),
+          # aggiorna gli asset invece di fallire.
+          $exists = $true
+          try { gh release view ${{ github.ref_name }} | Out-Null } catch { $exists = $false }
+          if ($exists) {
+            gh release upload ${{ github.ref_name }} (Get-ChildItem build/release/*) --clobber
+          } else {
+            gh release create ${{ github.ref_name }} (Get-ChildItem build/release/*) --title "${{ github.ref_name }}" --generate-notes
+          }
