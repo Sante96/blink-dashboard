@@ -17,6 +17,13 @@ export interface Release {
 
 export const changelog: Release[] = [
   {
+    version: "0.5.2",
+    date: "2026-07-26",
+    changes: [
+      { type: "fix", text: "Il backend crashava all'avvio sull'app installata (stream console assenti)" },
+    ],
+  },
+  {
     version: "0.5.1",
     date: "2026-07-26",
     changes: [

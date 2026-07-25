@@ -5,6 +5,18 @@ Configura l'app FastAPI, i monkey-patch a blinkpy, il CORS, il login automatico
 allo startup, e include i router modulari (auth, cameras, system, livestream).
 """
 
+import os
+import sys
+
+# Sotto PyInstaller in modalità --noconsole non c'è console allegata, quindi
+# sys.stdout/stderr sono None. Uvicorn (e altre librerie) chiamano stdout.isatty()
+# durante la configurazione del logging → crash immediato. Rimpiazziamo gli
+# stream mancanti con un sink su devnull PRIMA di qualsiasi altro import.
+if sys.stdout is None:
+    sys.stdout = open(os.devnull, "w")
+if sys.stderr is None:
+    sys.stderr = open(os.devnull, "w")
+
 import logging
 from contextlib import asynccontextmanager
 
@@ -107,8 +119,12 @@ async def root():
 
 if __name__ == "__main__":
     import uvicorn
+    # log_config=None: usa il logging già configurato con basicConfig() sopra,
+    # evitando che uvicorn ricrei da zero la sua config (che sotto --noconsole
+    # tocca gli stream e può fallire anche con stdout/stderr sostituiti).
     uvicorn.run(
         app,
         host=config.server.host,
         port=config.server.port,
+        log_config=None,
     )
