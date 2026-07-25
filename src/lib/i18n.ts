@@ -390,3 +390,8 @@ export function useT() {
   const lang = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
   return (key: string, vars?: Record<string, string | number>) => translate(lang, key, vars);
 }
+
+/** Hook: restituisce la lingua corrente, reattiva ai cambi. */
+export function useLang(): Lang {
+  return useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
+}

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Text } from "@/components/ui/text";
 import { changelog, type ChangeType, type Release } from "@/lib/changelog";
-import { useT } from "@/lib/i18n";
+import { useT, useLang } from "@/lib/i18n";
 
 // Tipologia → label minimo senza icona.
 const TYPE_LABELS: Record<ChangeType, string> = {
@@ -90,6 +90,7 @@ export function ChangelogPage() {
 
 function ReleaseDetail({ release }: { release: Release }) {
   const t = useT();
+  const lang = useLang();
 
   // Raggruppa le modifiche per tipo, mantenendo l'ordine feature→improvement→fix.
   const grouped = TYPE_ORDER.map((type) => ({
@@ -127,7 +128,7 @@ function ReleaseDetail({ release }: { release: Release }) {
                 <li key={i} className="flex items-start gap-2">
                   <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-muted-foreground/50" />
                   <Text as="span" size="sm" shadow="none" className="text-foreground/90">
-                    {change.text}
+                    {change.text[lang]}
                   </Text>
                 </li>
               ))}

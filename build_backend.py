@@ -173,13 +173,36 @@ def main() -> None:
     # clip lo invocano via subprocess; l'utente finale non lo ha installato).
     print("\n[5/5] Copia ffmpeg.exe nel bundle...")
     ffmpeg_src = shutil.which("ffmpeg")
-    if ffmpeg_src:
-        shutil.copy2(ffmpeg_src, RESOURCES_DIR / "ffmpeg.exe")
-        ff_mb = (RESOURCES_DIR / "ffmpeg.exe").stat().st_size / (1024 * 1024)
-        print(f"    ffmpeg.exe incluso ({ff_mb:.1f} MB) da {ffmpeg_src}")
-    else:
-        print("    ATTENZIONE: ffmpeg non trovato nel PATH — il livestream")
-        print("    non funzionera' sull'app distribuita. Installa ffmpeg e rilancia.")
+    if not ffmpeg_src:
+        print("ERRORE: ffmpeg non trovato nel PATH.")
+        print("Il livestream non funzionerebbe. Installa ffmpeg e rilancia.")
+        sys.exit(1)
+
+    # I package manager (choco/scoop) installano uno *shim* di poche centinaia
+    # di KB che rimanda al vero binario altrove: se lo copiamo nel bundle,
+    # nell'app distribuita non trova più il target e ffmpeg fallisce.
+    # Verifichiamo che sia il binario vero (statico, decine di MB, eseguibile).
+    size_mb = os.path.getsize(ffmpeg_src) / (1024 * 1024)
+    if size_mb < 10:
+        print(f"ERRORE: '{ffmpeg_src}' è {size_mb:.1f} MB — troppo piccolo per")
+        print("essere ffmpeg reale: è quasi certamente uno shim (choco/scoop).")
+        print("Scarica il build statico ufficiale da https://www.gyan.dev/ffmpeg/builds/")
+        print("e mettilo nel PATH prima dello shim, poi rilancia.")
+        sys.exit(1)
+
+    # Prova reale: -version deve girare e stampare "ffmpeg version".
+    try:
+        out = subprocess.run(
+            [ffmpeg_src, "-version"], capture_output=True, text=True, timeout=15
+        )
+        if out.returncode != 0 or "ffmpeg version" not in out.stdout:
+            raise RuntimeError(out.stdout + out.stderr)
+    except Exception as e:
+        print(f"ERRORE: '{ffmpeg_src}' non è un ffmpeg funzionante: {e}")
+        sys.exit(1)
+
+    shutil.copy2(ffmpeg_src, RESOURCES_DIR / "ffmpeg.exe")
+    print(f"    ffmpeg.exe incluso ({size_mb:.1f} MB) da {ffmpeg_src}")
 
     size_mb = exe_path.stat().st_size / (1024 * 1024)
     print(f"\n=== Build completata! ===")

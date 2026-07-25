@@ -43,8 +43,21 @@ jobs:
       - name: Setup uv (Python)
         uses: astral-sh/setup-uv@v5
 
-      - name: Install ffmpeg
-        run: choco install ffmpeg -y --no-progress
+      - name: Download ffmpeg (real static binary, not a shim)
+        shell: pwsh
+        run: |
+          # NB: choco/scoop installano uno *shim* di ~400KB che cerca il vero
+          # binario in un path relativo alla sua install dir — inutile una volta
+          # copiato nel bundle. Scarichiamo il build statico ufficiale.
+          $url = "https://github.com/GyanD/codexffmpeg/releases/download/7.1/ffmpeg-7.1-essentials_build.zip"
+          Invoke-WebRequest -Uri $url -OutFile ffmpeg.zip
+          Expand-Archive ffmpeg.zip -DestinationPath ffmpeg_dl
+          $exe = Get-ChildItem ffmpeg_dl -Recurse -Filter ffmpeg.exe | Select-Object -First 1
+          New-Item -ItemType Directory -Force ffmpeg_bin | Out-Null
+          Copy-Item $exe.FullName ffmpeg_bin\ffmpeg.exe
+          # Esponi la cartella nel PATH così build_backend.py la trova con which()
+          Add-Content $env:GITHUB_PATH (Resolve-Path ffmpeg_bin).Path
+          & ffmpeg_bin\ffmpeg.exe -version | Select-Object -First 1
 
       - name: Install frontend deps
         run: npm ci

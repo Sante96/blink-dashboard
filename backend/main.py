@@ -37,7 +37,23 @@ from routers.auth import _token_refresh_callback
 blinkpy_patches.apply_patches()
 
 logger = logging.getLogger("blink")
-logging.basicConfig(level=getattr(logging, config.logging.level.upper(), logging.INFO))
+
+# Logging: su console in sviluppo, su file nell'app distribuita (--noconsole
+# non ha una console, quindi senza file i problemi runtime sono invisibili).
+_log_level = getattr(logging, config.logging.level.upper(), logging.INFO)
+if getattr(sys, "frozen", False):
+    _log_dir = os.path.join(
+        os.environ.get("APPDATA", os.path.expanduser("~")), "BlinkDashboard"
+    )
+    os.makedirs(_log_dir, exist_ok=True)
+    logging.basicConfig(
+        level=_log_level,
+        filename=os.path.join(_log_dir, "backend.log"),
+        filemode="a",
+        format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+    )
+else:
+    logging.basicConfig(level=_log_level)
 
 
 @asynccontextmanager
