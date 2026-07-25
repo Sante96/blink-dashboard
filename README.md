@@ -1,28 +1,32 @@
 # Blink Dashboard
 
-App desktop per gestire le telecamere Blink (Amazon): livestream, arm/disarm, clip cloud, notifiche di movimento.
+Desktop app for managing Blink (Amazon) cameras: live streaming, arm/disarm, cloud clips, motion notifications.
 
-Costruita con **Tauri** (Rust) + **React/TypeScript** + backend **Python FastAPI** che dialoga con l'API Blink via [blinkpy](https://github.com/fronzbot/blinkpy).
+Built with **Tauri** (Rust) + **React/TypeScript** + a **Python FastAPI** backend that talks to the Blink API through [blinkpy](https://github.com/fronzbot/blinkpy).
 
-## Funzionalità
+![Version](https://img.shields.io/github/v/release/Sante96/blink-dashboard)
+![License](https://img.shields.io/badge/license-MIT-green)
 
-- 🎥 **Livestream** in tempo reale (Blink Mini, Mini 2, Outdoor) via IMMIS → ffmpeg → MSE
-- 🛡️ **Arm/disarm** globale e per camera
-- 🔔 **Notifiche di movimento** anche con l'app nella system tray
-- 📼 **Clip cloud**: feed eventi, player video, merge multi-camera a griglia, download
-- 💡 **Controllo luce** (Blink Mini 2)
-- ⚙️ Impostazioni per camera (sensibilità, qualità video, visione notturna…)
-- 🌍 Italiano / English
-- 🔄 Autoupdate via GitHub Releases
+## Features
 
-## Requisiti (sviluppo)
+- 🎥 **Live streaming** in real time (Blink Mini, Mini 2, Outdoor) via IMMIS → ffmpeg → MSE
+- 🛡️ **Arm/disarm** system-wide and per camera
+- 🔔 **Motion notifications**, including while the app sits in the system tray
+- 📼 **Cloud clips**: event feed, video player, multi-camera grid merge, download
+- 💡 **Light control** (Blink Mini 2)
+- ⚙️ Per-camera settings (motion sensitivity, video quality, night vision…)
+- 🌍 Italian / English
+- 🔄 Auto-update via GitHub Releases
 
-- Node.js 18+
-- Rust (stable)
-- Python 3.14+ con [uv](https://docs.astral.sh/uv/)
-- ffmpeg nel PATH
+## Installation
 
-## Sviluppo
+Download the latest `.msi` installer from [Releases](https://github.com/Sante96/blink-dashboard/releases/latest) and run it. Everything is bundled — no Python, no ffmpeg to install.
+
+The app auto-updates: when a new version is published it will offer to install it at startup.
+
+## Development
+
+Requirements: Node.js 18+, Rust (stable), Python 3.14+ with [uv](https://docs.astral.sh/uv/), ffmpeg in PATH.
 
 ```bash
 npm install
@@ -30,22 +34,22 @@ cd backend && uv sync && cd ..
 npm run tauri dev
 ```
 
-Il backend Python viene avviato automaticamente da Tauri su `127.0.0.1:8000`.
+The Python backend is started automatically by Tauri on `127.0.0.1:8000`.
 
-## Build di distribuzione
+## Building for distribution
 
-```bash
-# 1. Compila il backend in un exe standalone (PyInstaller)
+```powershell
+# 1. Compile the backend into a standalone exe (PyInstaller, bundles ffmpeg)
 python build_backend.py
 
-# 2. Build Tauri con firma updater
-$env:TAURI_PRIVATE_KEY = "$env:USERPROFILE\.tauri\blink-dashboard.key"
+# 2. Signed Tauri build
+$env:TAURI_PRIVATE_KEY = Get-Content "$env:USERPROFILE\.tauri\blink-dashboard.key" -Raw
 npm run tauri build
 ```
 
-L'installer risultante è in `src-tauri/target/release/bundle/`.
+The installer ends up in `src-tauri/target/release/bundle/`. See [RELEASING.md](RELEASING.md) for the full release process (CI does this automatically on version tags).
 
-## Architettura
+## Architecture
 
 ```
 ┌─────────────┐  IPC   ┌──────────────┐  HTTP/WS   ┌───────────────┐
@@ -58,10 +62,10 @@ L'installer risultante è in `src-tauri/target/release/bundle/`.
                                                     └──────────────┘
 ```
 
-- Il frontend parla col backend solo via `127.0.0.1:8000` (+ token anti-CSRF in release)
-- Il livestream passa per un proxy TCP locale: IMMIS → ffmpeg (fMP4) → WebSocket → MediaSource
-- Le credenziali sono cifrate a riposo con DPAPI di Windows; la password non viene mai salvata
+- The frontend talks to the backend only on `127.0.0.1:8000` (+ anti-CSRF token in release builds)
+- Live streams flow through a local TCP proxy: IMMIS → ffmpeg (fMP4) → WebSocket → MediaSource
+- Credentials are encrypted at rest with Windows DPAPI; the password is never persisted, only OAuth tokens
 
-## Licenza
+## License
 
-Progetto personale, non affiliato ad Amazon/Blink.
+[MIT](LICENSE). Personal project, not affiliated with Amazon or Blink.
